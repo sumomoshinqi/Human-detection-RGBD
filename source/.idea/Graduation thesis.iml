@@ -7,7 +7,6 @@
       <sourceFolder url="file://$MODULE_DIR$/HeadFinder.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/CalDepthDifNormalVec.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/PreProcess.h" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/HeadDetect.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/COpenNi.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/Data3DHelper.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/HeadDetect.cpp" isTestSource="false" />
@@ -19,6 +18,7 @@
       <sourceFolder url="file://$MODULE_DIR$/CalDepthDifNormalVec.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/PreProcess.cpp" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/GetRect.h" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/HeadDetect.h" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">

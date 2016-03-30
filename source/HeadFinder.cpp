@@ -13,7 +13,7 @@ HeadFinder::HeadFinder()
     fout = fopen("F:\\paper_demo\\detect_people_v1\\detect_people_v1\\47_label\\Korean_47_50800-52200_train_data_normal.txt", "a");//以追加方式写进txt文档要用“ab”，a代表追加，b代表二进制文本
     //forest.load("per10-hou3500.xml");
 
-    fout2 = fopen("F:\\1.txt","a");
+//    fout2 = fopen("F:\\1.txt","a");
 
     
     Pos = Mat(141, 7, CV_32FC1);

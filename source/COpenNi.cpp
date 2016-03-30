@@ -1,7 +1,4 @@
-//#include "stdafx.h"
 #include "COpenNi.h"
-#define DEPTH_DIR "/home/sumomoshinqi/Develop/CV/RGBD/38/depth/depth_"
-#define RGB_DIR "/home/sumomoshinqi/Develop/CV/RGBD/38/rgb/rgb_"
 
 COpenNI::COpenNI()
 {
@@ -25,6 +22,8 @@ int COpenNI::getTotalFrameNum() const
 
 void COpenNI::setFileStorage()
 {
+    string DEPTH_DIR = "/home/sumomoshinqi/Develop/CV/RGBD/38/depth/depth_";
+    string RGB_DIR = "/home/sumomoshinqi/Develop/CV/RGBD/38/rgb/rgb_";
 //    string dFileName = "depth_" + to_string(curFrameNum);
     //dFilePath = "G:\\实验室\\陈悠12.11\\LabDataSample\\Depth\\" + dFileName + ".png";
     //dFilePath = "F:\\dataset\\1\\depth\\png\\1 (" + to_string(curFrameNum) + ")_8UC1_From1File.png";
