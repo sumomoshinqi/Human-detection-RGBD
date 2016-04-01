@@ -4,6 +4,7 @@ int main(int argc, _TCHAR* argv[])
 {
     HeadDetect hd;
     hd.Run();
+    cout << "======Process Ended======" << endl;
     /*char ch[50] = "-1,5,10,-0.868,1.52,-5";
      for (int i = 0; i < strlen(ch); i++)
      cout << ch[i] << endl;*/
