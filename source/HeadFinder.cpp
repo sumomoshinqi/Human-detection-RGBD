@@ -10,19 +10,19 @@ HeadFinder::HeadFinder()
     rawHeadPoints = new Point2i[640 * 480];
     rawHeadPointsNum = 0;
     frame_num = 0;
-    fout = fopen("F:\\paper_demo\\detect_people_v1\\detect_people_v1\\47_label\\Korean_47_50800-52200_train_data_normal.txt", "a");//以追加方式写进txt文档要用“ab”，a代表追加，b代表二进制文本
+    fout = fopen("/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/47_label/Korean_47_50800-52200_train_data_normal.txt", "a");//以追加方式写进txt文档要用“ab”，a代表追加，b代表二进制文本
     //forest.load("per10-hou3500.xml");
 
-//    fout2 = fopen("F:\\1.txt","a");
+//    fout2 = fopen("/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/train.txt","a");
 
     
     Pos = Mat(141, 7, CV_32FC1);
     Ign = Mat(141, 5, CV_32FC1);
 
-    MatHelper::ReadMat("32F", Pos, "F:\\paper_demo\\detect_people_v1\\detect_people_v1\\47_label\\Pos_47_50800-52200.txt");
-    MatHelper::ReadMat("32F", Ign, "F:\\paper_demo\\detect_people_v1\\detect_people_v1\\47_label\\Ign_47_50800-52200.txt");
+    MatHelper::ReadMat("32F", Pos, "/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/47_label/Pos_47_50800-52200.txt");
+    MatHelper::ReadMat("32F", Ign, "/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/47_label/Ign_47_50800-52200.txt");
     
-    forest.load("F:\\paper_demo\\detect_people_v1\\detect_people_v1\\cloth_38_47\\cloth_38_47.xml");
+    forest.load("/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/util/cloth_38_47.xml");
     
 }
 
@@ -118,7 +118,7 @@ void HeadFinder::getHeadFeatures(vector<float> &feature, const Mat &depthFrame, 
             RectImg.create(4 * pixelNum + 2, 3 * pixelNum + 2, CV_8UC3);
             MatHelper::GetRectMat(tempRGB, RectImg, int(headPoint.x - 1.5*pixelNum - 1), int(headPoint.y - 0.7*pixelNum - 1), 3 * pixelNum + 2, 4 * pixelNum + 2);//width height
             resize(RectImg, resizedImage, cv::Size(48, 64));
-            hog.compute(resizedImage, feature, cv::Size(16, 16)); //调用计算函数开始计算;
+            hog.compute(resizedImage, feature, cv::Size(16, 16));
             RectImg.release();
             resizedImage.release();
             break;
