@@ -12,7 +12,7 @@ public:
     ~COpenNI();
     COpenNI(int tfNum) : FrameNum(tfNum)
     {
-        curFrameNum = 2000;											//2015.3.26修改，之前是1
+        curFrameNum = 2000;	//2015.3.26修改，之前是1
         curDepthFrame = cv::Mat(480, 640, CV_16UC1);
         curRGBFrame = cv::Mat(480, 640, CV_8UC3);
         setFileStorage();

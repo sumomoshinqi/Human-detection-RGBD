@@ -15,15 +15,17 @@ HeadFinder::HeadFinder()
 
 //    fout2 = fopen("/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/train.txt","a");
 
-    
+
     Pos = Mat(141, 7, CV_32FC1);
     Ign = Mat(141, 5, CV_32FC1);
 
+    // Positive features
     MatHelper::ReadMat("32F", Pos, "/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/47_label/Pos_47_50800-52200.txt");
+    // Ignored features
     MatHelper::ReadMat("32F", Ign, "/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/47_label/Ign_47_50800-52200.txt");
-    
+
     forest.load("/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/util/cloth_38_47.xml");
-    
+
 }
 
 
@@ -43,21 +45,21 @@ void HeadFinder::findHeadPoints(const Mat &rgbFrame, const Mat &depthFrame, int 
     //Find head points
     Mat tempRGB;
     rgbFrame.copyTo(tempRGB);
-    //cout << depthFrame.at<unsigned short>(100, 100) << endl;
+    //cout << depthFrame.at<int>(100, 100) << endl;
     for (int j =50; j < depthFrame.rows; ++j)//j=50
     {
         //circle(tempRGB, Point(540, j), 1, Scalar(255, 255, 255), -1, 8); //标记出不要的部分;
-        
+
         for (int i = 1; i < depthFrame.cols; ++i)
         {
-            if (depthFrame.at<unsigned short>(j, i) > 800 && depthFrame.at<unsigned short>(j, i) < 7000 //深度值要合理//800,6000
-                && abs(depthFrame.at<unsigned short>(j, i - 1) - depthFrame.at<unsigned short>(j, i)) > 200) //左右两个相邻点有深度差//////改前为200 2015.6.11修改
+            if (depthFrame.at<int>(j, i) > 800 && depthFrame.at<int>(j, i) < 7000 //深度值要合理//800,6000
+                && abs(depthFrame.at<int>(j, i - 1) - depthFrame.at<int>(j, i)) > 200) //左右两个相邻点有深度差//////改前为200 2015.6.11修改
             {
                 bool isHeadPoint = 1;
-                int pixelNum = Data3DHelper::GetSizeInImageBySizeIn3D(150, depthFrame.at<unsigned short>(j, i));
+                int pixelNum = Data3DHelper::GetSizeInImageBySizeIn3D(150, depthFrame.at<int>(j, i));
                 for (int k = pixelNum; k > -pixelNum && i + k > 0 && i + k < 640; k--)
                 {
-                    if (abs(depthFrame.at<unsigned short>(j, i) - depthFrame.at<unsigned short>(j - 1, i + k)) < 180)//上一行画一条线，长为2r，要这条线上深度都很小，那么就认为是头顶点的切线（我的理解）////改前为180 2015.6.11修改
+                    if (abs(depthFrame.at<int>(j, i) - depthFrame.at<int>(j - 1, i + k)) < 180)//上一行画一条线，长为2r，要这条线上深度都很小，那么就认为是头顶点的切线（我的理解）////改前为180 2015.6.11修改
                     {
                         //abs是因为背景可能为0
                         isHeadPoint = 0;//不是顶点;
@@ -65,7 +67,7 @@ void HeadFinder::findHeadPoints(const Mat &rgbFrame, const Mat &depthFrame, int 
                     }
                 }
                 if (isHeadPoint)
-                {
+                {   
                     bool isMarked = 1;
                     for (int lj = -2; lj < 1; lj++)
                     {
@@ -97,7 +99,7 @@ void HeadFinder::findHeadPoints(const Mat &rgbFrame, const Mat &depthFrame, int 
                 {
                     continue;
                 }
-                
+
             }
         }
     }
@@ -105,7 +107,7 @@ void HeadFinder::findHeadPoints(const Mat &rgbFrame, const Mat &depthFrame, int 
 
 void HeadFinder::getHeadFeatures(vector<float> &feature, const Mat &depthFrame, const Mat &rgbFrame, int featureKind, Point2i headPoint) //Should Mat be released?
 {
-    int pixelNum = Data3DHelper::GetSizeInImageBySizeIn3D(150, depthFrame.at<unsigned short>(headPoint.y, headPoint.x));
+    int pixelNum = Data3DHelper::GetSizeInImageBySizeIn3D(150, depthFrame.at<int>(headPoint.y, headPoint.x));
     Mat RectImg, resizedImage;
     HOGDescriptor hog(cvSize(48, 64), cvSize(32, 32), cvSize(16, 16), cvSize(16, 16), 8);// 分别是 WinSize BlockSize BlockStride cellSize nBins
     Mat tempRGB, tempDepth;
@@ -143,8 +145,8 @@ void HeadFinder::getHeadFeatures(vector<float> &feature, const Mat &depthFrame, 
             return;
         }
     }
-    
-    
+
+
 }
 
 void HeadFinder::drawRawHeadPoint(Mat &rgbFrame, const Mat &depthFrame)//画头顶点、画框和标记头顶点序号
@@ -153,17 +155,17 @@ void HeadFinder::drawRawHeadPoint(Mat &rgbFrame, const Mat &depthFrame)//画头�
     //{
     //	int x = rawHeadPoints[i].x; //对应之前的i
     //	int y = rawHeadPoints[i].y; //对应之前的j
-    //	int pixelNum = Data3DHelper::GetSizeInImageBySizeIn3D(150, depthFrame.at<unsigned short>(y, x));
-    
+    //	int pixelNum = Data3DHelper::GetSizeInImageBySizeIn3D(150, depthFrame.at<int>(y, x));
+
     //	/*	if (int(x - 1.5*pixelNum - 1) < 0 || int(x + 1.5*pixelNum + 1) > 640 || int(y + 3.3*pixelNum + 1) > 480 || int(y - 0.7*pixelNum - 1) < 0)
     //	{
     //	continue;
     //	}*/
-    
+
     //	{
     //		circle(rgbFrame, Point(x, y), 3, Scalar(0, 255, 255), -1, 8);
     //		rectangle(rgbFrame, cv::Rect(x - 1.5*pixelNum, y - 0.7*pixelNum, 3 * pixelNum, 4 * pixelNum), cv::Scalar(0, 0, 255), 1, 8);
-    
+
     //		putText(rgbFrame, to_string(i + 1), cvPoint(x, y), CV_FONT_HERSHEY_DUPLEX, 0.5, CV_RGB(0, 255, 0)); //绿色;
     //	}
     //	if (((g_openNi.getCurFrameNum() - 1)) % 10 == 0)
@@ -172,7 +174,7 @@ void HeadFinder::drawRawHeadPoint(Mat &rgbFrame, const Mat &depthFrame)//画头�
     //		imwrite(wFilePath, rgbFrame);
     //	}
     //}
-    
+
     if (TRAIN)//获得训练xml的数据data
     {
         if ((g_openNi.getCurFrameNum() - 1) % 10 == 0)
@@ -182,30 +184,30 @@ void HeadFinder::drawRawHeadPoint(Mat &rgbFrame, const Mat &depthFrame)//画头�
             IgnRow++;
             IgnCol = 0;
         }
-        
+
         for (int i = 0; i < rawHeadPointsNum; i++)
         {
             int x = rawHeadPoints[i].x; //对应之前的i
             int y = rawHeadPoints[i].y; //对应之前的j
-            int pixelNum = Data3DHelper::GetSizeInImageBySizeIn3D(150, depthFrame.at<unsigned short>(y, x));
-            
+            int pixelNum = Data3DHelper::GetSizeInImageBySizeIn3D(150, depthFrame.at<int>(y, x));
+
             /*	if (int(x - 1.5*pixelNum - 1) < 0 || int(x + 1.5*pixelNum + 1) > 640 || int(y + 3.3*pixelNum + 1) > 480 || int(y - 0.7*pixelNum - 1) < 0)
              {
              continue;
              }*/
-            
+
             {
                 circle(rgbFrame, Point(x, y), 3, Scalar(0, 255, 255), -1, 8);
                 rectangle(rgbFrame, cv::Rect(x - 1.5*pixelNum, y - 0.7*pixelNum, 3 * pixelNum, 4 * pixelNum), cv::Scalar(0, 0, 255), 1, 8);
-                
+
                 putText(rgbFrame, to_string(i + 1), cvPoint(x, y), CV_FONT_HERSHEY_DUPLEX, 0.5, CV_RGB(0, 255, 0)); //绿色;
             }
-            
+
             end = clock();
             double duration = (double)(end - start) / CLOCKS_PER_SEC;
             fprintf(fout2, "%f\n", duration);
-            
-            
+
+
             //if ((g_openNi.getCurFrameNum() - 1) % 10 == 0 /*&& (g_openNi.getCurFrameNum() - 1) <= 2000*/)
             //{
             //	if (i + 1 == Ign.at<float>(IgnRow, IgnCol))
@@ -217,20 +219,20 @@ void HeadFinder::drawRawHeadPoint(Mat &rgbFrame, const Mat &depthFrame)//画头�
             //	{
             //		PosCol++;
             //		Mat depthFrameClone(depthFrame);
-            
+
             //		calDepthDif(x, y, i, depthFrameClone, 1);
             //	}
             //	else if ((i + 1) % 5 == 0)
             //	{
             //		//fprintf(fout, "%d\n", g_openNi.getCurFrameNum() - 1);
             //		//cout << g_openNi.getCurFrameNum() - 1 << endl; cout << i + 1 << endl;
-            
+
             //		Mat depthFrameClone(depthFrame);
-            
+
             //		calDepthDif(x, y, i, depthFrameClone, -1);
             //	}
             //}
-            
+
         }
     }
     else//如果不训练，直接利用已生成的xml进行判断
@@ -241,15 +243,15 @@ void HeadFinder::drawRawHeadPoint(Mat &rgbFrame, const Mat &depthFrame)//画头�
             draw_headpoint = false;
             int x = rawHeadPoints[i].x; //对应之前的i
             int y = rawHeadPoints[i].y; //对应之前的j
-            int pixelNum = Data3DHelper::GetSizeInImageBySizeIn3D(150, depthFrame.at<unsigned short>(y, x));
-            
+            int pixelNum = Data3DHelper::GetSizeInImageBySizeIn3D(150, depthFrame.at<int>(y, x));
+
             calDepthDif(x, y, i, depthFrameClone, -1);
-            
+
             if (draw_headpoint)
             {
                 circle(rgbFrame, Point(x, y), 3, Scalar(0, 255, 255), -1, 8);
                 rectangle(rgbFrame, cv::Rect(x - 1.5*pixelNum, y - 0.7*pixelNum, 3 * pixelNum, 4 * pixelNum), cv::Scalar(0, 0, 255), 1, 8);
-                
+
                 putText(rgbFrame, to_string(i + 1), cvPoint(x, y), CV_FONT_HERSHEY_DUPLEX, 0.5, CV_RGB(0, 255, 0)); //绿色;
                 /*if (((g_openNi.getCurFrameNum() - 1) - 5) % 10 == 0)
                  {
@@ -259,7 +261,7 @@ void HeadFinder::drawRawHeadPoint(Mat &rgbFrame, const Mat &depthFrame)//画头�
             }
         }
     }
-    
+
 }
 
 int HeadFinder::calDepthDif(int x, int y, int i, Mat& depthFrame, int label)
@@ -273,67 +275,67 @@ int HeadFinder::calDepthDif(int x, int y, int i, Mat& depthFrame, int label)
     Mat sample;
     float result;
     Mat depthFrameClone2(depthFrame);
-    
+
     //for (i = 0; i < rawHeadPointsNum; i++)
     //{
     //	int x = rawHeadPoints[i].x; //对应之前的i
     //	int y = rawHeadPoints[i].y; //对应之前的j
-    //	int pixelNum = Data3DHelper::GetSizeInImageBySizeIn3D(150, depthFrame.at<unsigned short>(y, x));
-    
+    //	int pixelNum = Data3DHelper::GetSizeInImageBySizeIn3D(150, depthFrame.at<int>(y, x));
+
     //	if (int(x - 1.5*pixelNum - 1) < 0 || int(x + 1.5*pixelNum + 1) > 640 || int(y + 3.3*pixelNum + 1) > 480 || int(y - 0.7*pixelNum - 1) < 0)
     //	{
     //		continue;
     //	}
-    
+
     count = 0;
-    
+
     ordinate_x = x;
     ordinate_y = y;
-    pre_depth = depthFrame.at<unsigned short>(ordinate_y, ordinate_x);
-    
-    
-    
+    pre_depth = depthFrame.at<int>(ordinate_y, ordinate_x);
+
+
+
     for (p = 0; p < 7; p++)//IIIqu，选取了7个area
     {
         aft_x = ordinate_x + Data3DHelper::GetSizeInImageBySizeIn3D(18 * cos(p * pi / 6), pre_depth);
         aft_y = ordinate_y + Data3DHelper::GetSizeInImageBySizeIn3D(7, pre_depth) - Data3DHelper::GetSizeInImageBySizeIn3D(18 * sin(p * pi / 6), pre_depth);
         //ordinate_x,ordinate_y都是头顶点P的坐标，而算周围的相邻点的时候都是用的头的中心点坐标，故aft_y要加上一个头的半径所对应的像素点数
-        data.at<float>(i, count) = depthFrame.at<unsigned short>(aft_y, aft_x) - pre_depth;
-        
+        data.at<float>(i, count) = depthFrame.at<int>(aft_y, aft_x) - pre_depth;
+
         //计算属于哪个区域的时候都是用周围像素点的深度减去头顶点P的深度
-        depth_dif[count] = depthFrame.at<unsigned short>(aft_y, aft_x) - pre_depth;
-        
+        depth_dif[count] = depthFrame.at<int>(aft_y, aft_x) - pre_depth;
+
         //Calculate normal vector
         calNormalVec(ordinate_x, ordinate_y, aft_x, aft_y, depthFrameClone2, normalVec[count][0], normalVec[count][1]);
         count++;
     }
-    
+
     for (p = 0; p < 5; p++)//IIqu，选取了5个area
     {
         aft_x = ordinate_x + Data3DHelper::GetSizeInImageBySizeIn3D(18 * cos(-pi / 4 - p*pi / 8), pre_depth);
         aft_y = ordinate_y + Data3DHelper::GetSizeInImageBySizeIn3D(7, pre_depth) - Data3DHelper::GetSizeInImageBySizeIn3D(18 * sin(-pi / 4 - p*pi / 8), pre_depth);
-        data.at<float>(i, count) = depthFrame.at<unsigned short>(aft_y, aft_x) - pre_depth;
-        
-        depth_dif[count] = depthFrame.at<unsigned short>(aft_y, aft_x) - pre_depth;
-        
+        data.at<float>(i, count) = depthFrame.at<int>(aft_y, aft_x) - pre_depth;
+
+        depth_dif[count] = depthFrame.at<int>(aft_y, aft_x) - pre_depth;
+
         //Calculate normal vector
         calNormalVec(ordinate_x, ordinate_y, aft_x, aft_y, depthFrameClone2, normalVec[count][0], normalVec[count][1]);
         count++;
     }
-    
+
     for (p = 0; p < 8; p++)//Iqu,有过个area，此次选取了360°的8个。
     {
         aft_x = ordinate_x + Data3DHelper::GetSizeInImageBySizeIn3D(7 * cos(p * pi / 4), pre_depth);//7 * cos(p * pi / 4)
         aft_y = ordinate_y + Data3DHelper::GetSizeInImageBySizeIn3D(7, pre_depth) - Data3DHelper::GetSizeInImageBySizeIn3D(7 * sin(p * pi / 4), pre_depth);
-        data.at<float>(i, count) = depthFrame.at<unsigned short>(aft_y, aft_x) - pre_depth;
-        
-        depth_dif[count] = depthFrame.at<unsigned short>(aft_y, aft_x) - pre_depth;
-        
+        data.at<float>(i, count) = depthFrame.at<int>(aft_y, aft_x) - pre_depth;
+
+        depth_dif[count] = depthFrame.at<int>(aft_y, aft_x) - pre_depth;
+
         //Calculate normal vector
         calNormalVec(ordinate_x, ordinate_y, aft_x, aft_y, depthFrameClone2, normalVec[count][0], normalVec[count][1]);
         count++;
     }
-    
+
     if (TRAIN)//获得训练xml的数据data
     {
         //fprintf(fout,"Frame:%d\n",g_openNi.getCurFrameNum()-1);
@@ -342,12 +344,12 @@ int HeadFinder::calDepthDif(int x, int y, int i, Mat& depthFrame, int label)
         //	depth_dif[6], depth_dif[7], depth_dif[8], depth_dif[9], depth_dif[10], depth_dif[11],
         //	depth_dif[12], depth_dif[13], depth_dif[14], depth_dif[15], depth_dif[16], depth_dif[17],
         //	depth_dif[18], depth_dif[19]/*, depth_dif[20], depth_dif[21], depth_dif[22], depth_dif[23], depth_dif[24], depth_dif[25], depth_dif[26]*/);
-        
+
         /*fprintf(fout, "%d", label);
-         
+
          for (p = 0; p < 20; p++)
          fprintf(fout, ",%.2lf,%.2lf", normalVec[p][0],normalVec[p][1]);
-         
+
          fprintf(fout, "\n");*/
     }
     else // 如果不训练，直接利用已生成的xml进行判断
@@ -364,20 +366,20 @@ int HeadFinder::calDepthDif(int x, int y, int i, Mat& depthFrame, int label)
         //MatHelper::PrintMat("32F", sample, "D://2.txt");
         //cout << data.at<signed short>(0, 0) << endl;
         //cout << data.at<signed short>(0, 39) << endl;
-        
+
         //result = forest.predict(sample);
         result = forest.predict_prob(sample);
-        
-        
+
+
         //cout << (end - start) / CLOCKS_PER_SEC *1000 << endl;
         //cout << result << endl;
-        
+
         //cout << result << endl;
         if (result >0.7 /*result == 1*/ /*|| (int)result == 49*/)
             draw_headpoint = true;
-        
+
     }
-    
+
     return 0;
 }
 
@@ -385,19 +387,19 @@ int HeadFinder::calDepthDif(int x, int y, int i, Mat& depthFrame, int label)
 int HeadFinder::calNormalVec(int px, int py, int x, int y, Mat& depthFrame, double& theta1, double& theta2 )
 {
     /*signed short Gradient_X,Gradient_Y,Gradient_PX,Gradient_PY;
-     
-     Gradient_X = 0.5*(depthFrame.at<unsigned short>(y, x + 1) - depthFrame.at<unsigned short>(y, x - 1));
-     Gradient_Y = 0.5*(depthFrame.at<unsigned short>(y + 1, x) - depthFrame.at<unsigned short>(y - 1, x));
-     
-     Gradient_PX = 0.5*(depthFrame.at<unsigned short>(py, px + 1) - depthFrame.at<unsigned short>(py, px - 1));
-     Gradient_PY = 0.5*(depthFrame.at<unsigned short>(py + 1, px) - depthFrame.at<unsigned short>(py - 1, px));
-     
+
+     Gradient_X = 0.5*(depthFrame.at<int>(y, x + 1) - depthFrame.at<int>(y, x - 1));
+     Gradient_Y = 0.5*(depthFrame.at<int>(y + 1, x) - depthFrame.at<int>(y - 1, x));
+
+     Gradient_PX = 0.5*(depthFrame.at<int>(py, px + 1) - depthFrame.at<int>(py, px - 1));
+     Gradient_PY = 0.5*(depthFrame.at<int>(py + 1, px) - depthFrame.at<int>(py - 1, px));
+
      theta1 = (Gradient_X*Gradient_PX + Gradient_Y*Gradient_PY + 1) / ((sqrt(Gradient_Y*Gradient_Y + Gradient_X*Gradient_X + 1))*(sqrt(Gradient_PY*Gradient_PY + Gradient_PX*Gradient_PX + 1)));*/
-    
+
     signed short Gradient_X, Gradient_Y;
-    Gradient_X = 0.5*(depthFrame.at<unsigned short>(y, x + 1) - depthFrame.at<unsigned short>(y, x - 1));
-    Gradient_Y = 0.5*(depthFrame.at<unsigned short>(y + 1, x) - depthFrame.at<unsigned short>(y - 1, x));
-    
+    Gradient_X = 0.5*(depthFrame.at<int>(y, x + 1) - depthFrame.at<int>(y, x - 1));
+    Gradient_Y = 0.5*(depthFrame.at<int>(y + 1, x) - depthFrame.at<int>(y - 1, x));
+
     if (Gradient_X != 0)
         theta1 = atan(Gradient_Y / Gradient_X) / pi * 180;
     else if (Gradient_Y > 0)
@@ -405,6 +407,6 @@ int HeadFinder::calNormalVec(int px, int py, int x, int y, Mat& depthFrame, doub
     else
         theta1 = -90;
     theta2 = atan(sqrt(Gradient_Y*Gradient_Y + Gradient_X*Gradient_X)) / pi * 180;
-    
+
     return 0;
 }

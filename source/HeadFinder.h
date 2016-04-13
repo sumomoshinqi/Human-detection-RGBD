@@ -26,7 +26,7 @@ private:
     int PosRow = -1, IgnRow = -1, PosCol, IgnCol;
     Mat Pos, Ign;
 #define pi 3.1415926
-#define TRAIN false
+#define TRAIN true
     bool draw_headpoint;
     clock_t start, end;
 };
