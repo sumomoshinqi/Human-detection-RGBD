@@ -8,6 +8,7 @@
 class Data3DHelper
 {
 public:
+    // 输入 物理空间内长度 输出 图像空间的像素长
     static int GetSizeInImageBySizeIn3D(const int iSizeIn3D, const int iDistance)
     {
         if (iDistance == 0 || iSizeIn3D == 0)
