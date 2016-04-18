@@ -22,7 +22,7 @@ void main(void)
 		"Classifier is Random Trees\n");
 	printf("Please wait...\n");
 
-	const char* dataFileName = "F:\\paper_demo\\detect_people_v1\\detect_people_v1\\cloth_38_47_normal\\cloth_38_47_normal.data";
+	const char* dataFileName = "/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/47_label/cloth_38_47_normal.data";
 	buildRandomForestClassifier(dataFileName);
 }
 
@@ -71,7 +71,7 @@ void buildRandomForestClassifier(const char* _dataFileName)
 	forest.train(data, CV_ROW_SAMPLE, responses, Mat(), Mat(), Mat(), Mat(),                          //这里用到的是data来作为训练，因此用到的是全部数据（NSAMPLES_ALL个数据）
 		CvRTParams(10, 10, 0, false, 15, 0, true, 4, 100, 0.01f, CV_TERMCRIT_ITER));
 
-	forest.save("F:\\paper_demo\\detect_people_v1\\detect_people_v1\\cloth_38_47_normal\\cloth_38_47_normal.xml");
+	forest.save("/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/47_label/cloth_38_47_normal.xml");
 	cout << "finish!\n" << endl;
 	system("pause");
 }

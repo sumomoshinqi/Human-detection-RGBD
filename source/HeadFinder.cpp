@@ -25,7 +25,7 @@ HeadFinder::HeadFinder()
     // Ignored features
     MatHelper::ReadMat("32F", Ign, "/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/47_label/Ign_47_50800-52200.txt");
 
-    forest.load("/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/util/cloth_38_47.xml");
+    forest.load("/home/sumomoshinqi/Develop/CV/Human-detection-RGBD/source/cloth_38_47.xml");
 
 }
 
